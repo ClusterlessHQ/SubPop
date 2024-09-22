@@ -1,0 +1,9 @@
+From: Jeff.Schlimmer@cs.cmu.edu
+Date: Mon, 25 Jun 90 15:24:07 EDT
+
+    David, here is the mushroom file with the longer names.  I
+regenerated it from the original files that I fed to Stagger, and
+I don't know where there are more records than are in the 1-char
+version.  (8416 versus 8124.  Sigh.)
+
+----------------------------------------------------------------------
