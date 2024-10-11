@@ -1,9 +1,9 @@
-class,1,2,3,4,5
-d1,a,c,d,e,
-d1,a,,,,
-d1,b,e,,,
+class,1,2,3,4
+d1,a,c,d,e
+d1,a,,,
+d1,b,e,,
 d1,b,c,d,e
-d2,a,b,,,
-d2,c,e,,,
-d2,a,b,c,d,
+d2,a,b,,
+d2,c,e,,
+d2,a,b,c,d
 d2,d,e,,

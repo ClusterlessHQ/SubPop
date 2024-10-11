@@ -67,6 +67,10 @@ public class ItemStore implements Iterable<ItemSet> {
         return classes.elementSet();
     }
 
+    public int classCount(String className) {
+        return classes.count(className);
+    }
+
     public BiMap<String, Integer> classesIndex() {
         BiMap<String, Integer> result = HashBiMap.create();
 
@@ -76,12 +80,12 @@ public class ItemStore implements Iterable<ItemSet> {
         return result;
     }
 
-    public int count(Item item) {
+    public int itemCount(Item item) {
         return items.count(item);
     }
 
     public double itemSupport(Item item) {
-        return (double) count(item) / items.size();
+        return (double) itemCount(item) / items.size();
     }
 
     @Override

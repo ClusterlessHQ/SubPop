@@ -35,7 +35,7 @@ public class PrintNode implements Node {
         }
 
         return entry.item()
-                       .toString() + Arrays.toString(entry.counts());
+                       .toString() + Arrays.toString(entry.classCounts());
     }
 
     @CheckForNull

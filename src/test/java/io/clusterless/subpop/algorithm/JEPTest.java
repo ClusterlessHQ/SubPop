@@ -6,6 +6,7 @@ import com.opencsv.RFC4180Parser;
 import com.opencsv.RFC4180ParserBuilder;
 import com.opencsv.exceptions.CsvValidationException;
 import io.clusterless.subpop.algorithm.cptree.CPTree;
+import io.clusterless.subpop.algorithm.items.Item;
 import io.clusterless.subpop.algorithm.items.ItemStore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,28 +14,46 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 
 public class JEPTest {
-
-    private RFC4180Parser parser = new RFC4180ParserBuilder()
+    private final RFC4180Parser parser = new RFC4180ParserBuilder()
             .withSeparator(',')
             .build();
 
     @Test
     void mushroom() throws IOException, CsvValidationException {
-        CPTree cpTree = handle("data/mushrooms.csv", true, true);
+        ItemStore itemStore = handle("data/mushrooms.csv", true, true);
+        Assertions.assertEquals(8416, itemStore.size());
 
-        Assertions.assertEquals(8416, cpTree.itemStore().size());
+        CPTree cpTree = new CPTree(itemStore);
+
+        List<Pattern> patterns = cpTree.findPatterns(2);
+
+        patterns.forEach(System.out::println);
     }
 
     @Test
     void twoClass() throws IOException, CsvValidationException {
-        CPTree cpTree = handle("data/two-class-example.csv", true, false);
-        Assertions.assertEquals(8, cpTree.itemStore().size());
+        ItemStore itemStore = handle("data/two-class-example.csv", true, false);
+
+        Assertions.assertEquals(8, itemStore.size());
+
+        CPTree cpTree = new CPTree(itemStore);
+
+        List<Pattern> patterns = cpTree.findPatterns(2);
+
         System.out.println(cpTree.print());
+
+        System.out.println(patterns);
+
+        Assertions.assertEquals(3, patterns.size());
+        Assertions.assertTrue(patterns.contains(new Pattern(0, List.of(new Item("e"), new Item("b")), 2)));
+        Assertions.assertTrue(patterns.contains(new Pattern(0, List.of(new Item("e"), new Item("c"), new Item("d")), 2)));
+        Assertions.assertTrue(patterns.contains(new Pattern(1, List.of(new Item("a"), new Item("b")), 2)));
     }
 
-    private CPTree handle(String filename, boolean hasHeader, boolean retainCol) throws IOException, CsvValidationException {
+    private ItemStore handle(String filename, boolean hasHeader, boolean retainCol) throws IOException, CsvValidationException {
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filename)) {
             assert inputStream != null;
             try (InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
@@ -47,7 +66,7 @@ public class JEPTest {
                 reader.iterator()
                         .forEachRemaining(itemStore::insert);
 
-                return new CPTree(itemStore);
+                return itemStore;
             }
         }
     }
