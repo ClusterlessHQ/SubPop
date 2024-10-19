@@ -1,18 +1,36 @@
-## Micronaut 4.6.1 Documentation
+## SubPop
 
-- [User Guide](https://docs.micronaut.io/4.6.1/guide/index.html)
-- [API Reference](https://docs.micronaut.io/4.6.1/api/index.html)
-- [Configuration Reference](https://docs.micronaut.io/4.6.1/guide/configurationreference.html)
-- [Micronaut Guides](https://guides.micronaut.io/index.html)
+SubPop is a command line utility for finding the differences between one or more tabular datasets.
 
----
+That is, it identifies the itemsets or patterns that occur in one class of data and not (or infrequently) in another
+class of data.
 
-- [Shadow Gradle Plugin](https://plugins.gradle.org/plugin/com.github.johnrengelman.shadow)
-- [Micronaut Gradle Plugin documentation](https://micronaut-projects.github.io/micronaut-gradle-plugin/latest/)
-- [GraalVM Gradle Plugin documentation](https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html)
+Consider the two classes (d1 and d2) below.
 
-## Feature serialization-jackson documentation
+| class |   |   |   |   |
+|-------|---|---|---|---|
+| d1    | a | c | d | e |
+| d1    | a |   |   |   |
+| d1    | b | e |   |   |
+| d1    | b | c | d | e |
+| d2    | a | b |   |   |
+| d2    | c | e |   |   |
+| d2    | a | b | c | d |
+| d2    | d | e |   |   |
 
-- [Micronaut Serialization Jackson Core documentation](https://micronaut-projects.github.io/micronaut-serialization/latest/guide/)
+SubPop will identify the item sets unique to each class. In this example the values are considered as a bag of values, so
+the column is ignored.
 
+| class |   |   |   | support |
+|-------|---|---|---|---------|
+| d1    | e | b |   | 0.5     |
+| d1    | e | c | d | 0.5     |
+| d2    | a | b |   | 0.5     |
 
+Notice (e,b) only occurs in d1 twice, and in d2 zero times. 
+
+The support is the ratio of occurrences with the size of the class population.
+
+# Installation
+
+__CLI is still under development__
