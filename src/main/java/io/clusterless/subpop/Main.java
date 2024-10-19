@@ -13,8 +13,11 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 
-@Command(name = "subpop", description = "...",
-        mixinStandardHelpOptions = true)
+@Command(
+        name = "subpop",
+        description = "...",
+        mixinStandardHelpOptions = true
+)
 public class Main implements Runnable {
 
     @Option(names = {"-v", "--verbose"}, description = "...")

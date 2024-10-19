@@ -14,6 +14,7 @@ import com.opencsv.RFC4180Parser;
 import com.opencsv.RFC4180ParserBuilder;
 import com.opencsv.exceptions.CsvValidationException;
 import io.clusterless.subpop.algorithm.cptree.CPTree;
+import io.clusterless.subpop.algorithm.detail.Detail;
 import io.clusterless.subpop.algorithm.items.Item;
 import io.clusterless.subpop.algorithm.items.ItemStore;
 import org.junit.jupiter.api.Assertions;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.List;
 
 public class JEPTest {
@@ -38,7 +40,10 @@ public class JEPTest {
 
         List<Pattern> patterns = cpTree.findPatterns(2);
 
-        patterns.forEach(System.out::println);
+        Detail detail = new Detail(cpTree, patterns);
+
+        System.out.println(Arrays.toString(detail.header()));
+        detail.rows(.4f).forEach(row -> System.out.println(Arrays.toString(row)));
     }
 
     @Test
@@ -51,14 +56,15 @@ public class JEPTest {
 
         List<Pattern> patterns = cpTree.findPatterns(2);
 
-        System.out.println(cpTree.print());
-
-        System.out.println(patterns);
-
         Assertions.assertEquals(3, patterns.size());
         Assertions.assertTrue(patterns.contains(new Pattern(0, List.of(new Item("e"), new Item("b")), 2)));
         Assertions.assertTrue(patterns.contains(new Pattern(0, List.of(new Item("e"), new Item("c"), new Item("d")), 2)));
         Assertions.assertTrue(patterns.contains(new Pattern(1, List.of(new Item("a"), new Item("b")), 2)));
+
+        Detail detail = new Detail(cpTree, patterns);
+
+        System.out.println(Arrays.toString(detail.header()));
+        detail.rows().forEach(row -> System.out.println(Arrays.toString(row)));
     }
 
     private ItemStore handle(String filename, boolean hasHeader, boolean retainCol) throws IOException, CsvValidationException {

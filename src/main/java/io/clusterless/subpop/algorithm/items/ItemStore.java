@@ -28,8 +28,20 @@ public class ItemStore implements Iterable<ItemSet> {
         this.retainCol = retainCol;
     }
 
+    public int classIndex() {
+        return classIndex;
+    }
+
+    public String[] headers() {
+        return headers;
+    }
+
     public String className() {
         return headers[classIndex];
+    }
+
+    public boolean retainCol() {
+        return retainCol;
     }
 
     public String columnName(int index) {

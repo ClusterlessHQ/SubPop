@@ -35,16 +35,14 @@ dependencies {
     runtimeOnly("ch.qos.logback:logback-classic:1.5.8")
 }
 
-
 application {
     mainClass = "io.clusterless.subpop.Main"
 }
+
 java {
     sourceCompatibility = JavaVersion.toVersion("17")
     targetCompatibility = JavaVersion.toVersion("17")
 }
-
-
 
 micronaut {
     testRuntime("junit5")
@@ -54,9 +52,6 @@ micronaut {
     }
 }
 
-
 tasks.named<io.micronaut.gradle.docker.NativeImageDockerfile>("dockerfileNative") {
     jdkVersion = "21"
 }
-
-

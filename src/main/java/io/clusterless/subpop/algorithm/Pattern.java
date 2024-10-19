@@ -22,21 +22,33 @@ public class Pattern {
     public Pattern() {
     }
 
-    public Pattern(Pattern alpha) {
-        this.classIndex = alpha.classIndex;
-        this.items = new LinkedList<>(alpha.items);
-        this.support = alpha.support;
-    }
-
-    public Pattern(int classIndex, List<Item> items, int support) {
-        this.classIndex = classIndex;
-        this.items = items;
-        this.support = support;
+    public Pattern(Pattern pattern) {
+        this.classIndex = pattern.classIndex;
+        this.items = new LinkedList<>(pattern.items);
+        this.support = pattern.support;
     }
 
     public Pattern(Pattern pattern, Item item) {
         this(pattern);
         items.add(item);
+    }
+
+    public Pattern(int classIndex, List<Item> items, int support) {
+        this.classIndex = classIndex;
+        this.items = new LinkedList<>(items);
+        this.support = support;
+    }
+
+    public int classIndex() {
+        return classIndex;
+    }
+
+    public List<Item> items() {
+        return items;
+    }
+
+    public int support() {
+        return support;
     }
 
     public void setClassIndex(int classIndex) {

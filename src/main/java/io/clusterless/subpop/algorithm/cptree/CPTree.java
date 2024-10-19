@@ -128,6 +128,18 @@ public class CPTree {
         this.root = new Node();
     }
 
+    public String classValue(int index) {
+        return indexClasses.get(index);
+    }
+
+    public int classSize(int classIndex) {
+        return itemStore.classCount(indexClasses.get(classIndex));
+    }
+
+    public int classSize(String classValue) {
+        return itemStore.classCount(classValue);
+    }
+
     public List<Pattern> findPatterns(int minSupport) {
         Predicate<Integer> isMin = count -> count >= minSupport;
         BiPredicate<Integer, Integer> isSJEP = (lhs, rhs) -> isMin.test(lhs) && rhs == 0;
@@ -177,9 +189,6 @@ public class CPTree {
     }
 
     private void mergeSubTreeOn(Node t2, List<Pattern> patterns, Pattern alpha, Predicate<Integer> isMin, BiPredicate<Integer, Integer> isSJEP) {
-
-        int totalItems = itemStore().size();
-
         for (Entry entry : t2.entries()) {
             Node t1 = entry.child;
 
@@ -193,14 +202,10 @@ public class CPTree {
                 int currentItemCount = entry.classCounts[i];
                 int remainingItemCount = allItemCounts - currentItemCount;
 
-                int classCount = itemStore().classCount(indexClasses.get(i));
-                int remainingClassCount = totalItems - classCount;
-
                 test = isSJEP.test(currentItemCount, remainingItemCount);
+
                 if (test) {
-                    beta.setClassIndex(i);
-                    beta.setSupport(currentItemCount);
-                    patterns.add(new Pattern(beta));
+                    patterns.add(new Pattern(i, beta.items(), currentItemCount));
                     break;
                 }
             }
