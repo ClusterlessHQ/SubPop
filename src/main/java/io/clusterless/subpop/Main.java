@@ -45,7 +45,7 @@ public class Main implements Runnable {
     protected String classIndex = "0";
 
     @CommandLine.Option(names = {"--class-value"}, description = "class value")
-    protected String[] classValue = null;
+    protected String[] classValue = new String[0];
 
     @CommandLine.Option(names = {"--min-support"}, description = "minimum support")
     protected int support = 2;

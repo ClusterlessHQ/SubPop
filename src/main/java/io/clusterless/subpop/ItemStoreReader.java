@@ -73,7 +73,7 @@ public class ItemStoreReader {
         try (InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
              CSVReader reader = createReader(inputStreamReader)) {
 
-            String[] headers = hasHeader ? reader.readNext() : new String[0];
+            String[] headers = hasHeader ? reader.readNext() : new String[reader.peek().length];
 
             ItemStore itemStore = createItemStore(headers);
 
