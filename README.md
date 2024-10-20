@@ -1,9 +1,11 @@
-## SubPop
+# SubPop
 
 SubPop is a command line utility for finding the differences between one or more tabular datasets.
 
 That is, it identifies the itemsets or patterns that occur in one class of data and not (or infrequently) in another
 class of data.
+
+## Overview
 
 Consider the two classes (d1 and d2) below.
 
@@ -18,7 +20,8 @@ Consider the two classes (d1 and d2) below.
 | d2    | a | b | c | d |
 | d2    | d | e |   |   |
 
-SubPop will identify the item sets unique to each class. In this example the values are considered as a bag of values, so
+SubPop will identify the item sets unique to each class. In this example the values are considered as a bag of values,
+so
 the column is ignored.
 
 | class |   |   |   | support |
@@ -27,15 +30,35 @@ the column is ignored.
 | d1    | e | c | d | 0.5     |
 | d2    | a | b |   | 0.5     |
 
-Notice (e,b) only occurs in d1 twice, and in d2 zero times. 
+Notice (e,b) only occurs in d1 twice, and in d2 zero times.
 
 The support is the ratio of occurrences with the size of the class population.
 
-# Installation
+## Installation
 
 __CLI is still under development__
 
-# Usage
+## Usage
+
+By default, SubPop will track values unique to columns.
+
+Using the mushroom dataset, we see the first pattern found in the dataset below:
+
+| class  | cap-shape | cap-surface | cap-color | bruises | odor | gill-attachment | gill-spacing | gill-size | gill-color | stalk-shape | stalk-root | stalk-surface-above-ring | stalk-surface-below-ring | stalk-color-above-ring | stalk-color-below-ring | veil-type | veil-color | ring-number | ring-type | spore-print-color | population | habitat | support   |
+|--------|-----------|-------------|-----------|---------|------|-----------------|--------------|-----------|------------|-------------|------------|--------------------------|--------------------------|------------------------|------------------------|-----------|------------|-------------|-----------|-------------------|------------|---------|-----------|
+| EDIBLE |           |             |           | BRUISES |      | FREE            |              |           |            | TAPERING    | BULBOUS    | SMOOTH                   | SMOOTH                   |                        |                        | PARTIAL   | WHITE      | ONE         | PENDANT   |                   |            | WOODS   | 0.4064171 |
+
+Here we see the values that make up the pattern for the given class and the coverage (support) that class has over the
+records within that class.
+
+To see the full results:
+
+```shell
+./gradlew installDist
+./build/install/subpop/bin/subpop --input src/test/resources/data/mushrooms.csv --min-ratio .4 --class-value EDIBLE
+```
+
+## CLI Options
 
 ```text
 Usage: subpop [-hvV] [--input-header] [--output-header]
@@ -64,7 +87,7 @@ Usage: subpop [-hvV] [--input-header] [--output-header]
   -V, --version          Print version information and exit.
 ```
 
-# References
+## References
 
 1. García‐Vico, A. M., Carmona, C. J., Martín, D., García‐Borroto, M. & Jesus, M. J. del. An overview of emerging
    pattern mining in supervised descriptive rule discovery: taxonomy, empirical study, trends, and prospects. Wiley
