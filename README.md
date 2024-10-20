@@ -34,3 +34,40 @@ The support is the ratio of occurrences with the size of the class population.
 # Installation
 
 __CLI is still under development__
+
+# Usage
+
+```text
+Usage: subpop [-hvV] [--input-header] [--output-header]
+              [--class-col=<classIndex>] [--input-delimiter=<delimiter>]
+              [--min-ratio=<supportRatio>] [--min-support=<support>]
+              [--output-delimiter=<delimiter>] [--class-value=<classValue>]...
+              [--input=<inputs>]...
+...
+      --class-col=<classIndex>
+                         class column name or index
+      --class-value=<classValue>
+                         class value
+  -h, --help             Show this help message and exit.
+      --input=<inputs>   input data
+      --input-delimiter=<delimiter>
+                         delimiter
+      --input-header     has header
+      --min-ratio=<supportRatio>
+                         minimum support ratio
+      --min-support=<support>
+                         minimum support
+      --output-delimiter=<delimiter>
+                         delimiter
+      --output-header    has header
+  -v, --verbose          ...
+  -V, --version          Print version information and exit.
+```
+
+# References
+
+1. García‐Vico, A. M., Carmona, C. J., Martín, D., García‐Borroto, M. & Jesus, M. J. del. An overview of emerging
+   pattern mining in supervised descriptive rule discovery: taxonomy, empirical study, trends, and prospects. Wiley
+   Interdiscip. Rev.: Data Min. Knowl. Discov. 8, (2018).
+2. Fan, H. & Ramamohanarao, K. Fast discovery and the generalization of strong jumping emerging patterns for building
+   compact and accurate classifiers. IEEE Trans. Knowl. Data Eng. 18, 721–737 (2006).

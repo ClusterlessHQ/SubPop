@@ -94,6 +94,17 @@ public class Detail {
         this.patterns = patterns;
     }
 
+    /**
+     * The default support ratio is 5 / N where N is the number of items in the item store.
+     *
+     * See "Fast discovery and the generalization of strong jumping emerging patterns for building compact and accurate classifiers"
+     *
+     * @return the default support ratio
+     */
+    public float defaultSupportRation() {
+        return Math.max(0.01f, 5.0f / cpTree.itemStore().size());
+    }
+
     public String[] header() {
         ItemStore itemStore = cpTree.itemStore();
         List<String> results = new ArrayList<>();
@@ -132,8 +143,12 @@ public class Detail {
         return results.toArray(new String[0]);
     }
 
-    public Iterable<String[]> rows() {
+    public Iterable<String[]> rowsAll() {
         return rows(patternDetail -> true);
+    }
+
+    public Iterable<String[]> rows() {
+        return rows(hasMinSupport(defaultSupportRation()));
     }
 
     public Iterable<String[]> rows(float minSupportRatio) {

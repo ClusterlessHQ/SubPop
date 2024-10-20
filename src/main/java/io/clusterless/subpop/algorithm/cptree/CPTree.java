@@ -140,19 +140,39 @@ public class CPTree {
         return itemStore.classCount(classValue);
     }
 
+    public List<Pattern> findPatterns(int minSupport, String... classes) {
+        if (classes.length == 0) {
+            return findPatterns(minSupport);
+        }
+
+        int[] classIndexes = Arrays.stream(classes)
+                .mapToInt(classesIndex::get)
+                .toArray();
+
+        return findPatterns(minSupport, classIndexes);
+    }
+
     public List<Pattern> findPatterns(int minSupport) {
+        int[] classIndexes = new int[classesIndex.size()];
+        for (int i = 0; i < classIndexes.length; i++) {
+            classIndexes[i] = i;
+        }
+        return findPatterns(minSupport, classIndexes);
+    }
+
+    public List<Pattern> findPatterns(int minSupport, int[] classIndexes) {
         Predicate<Integer> isMin = count -> count >= minSupport;
         BiPredicate<Integer, Integer> isSJEP = (lhs, rhs) -> isMin.test(lhs) && rhs == 0;
 
-        return findPatterns(isMin, isSJEP);
+        return findPatterns(isMin, isSJEP, classIndexes);
     }
 
-    private List<Pattern> findPatterns(Predicate<Integer> isMin, BiPredicate<Integer, Integer> isSJEP) {
+    private List<Pattern> findPatterns(Predicate<Integer> isMin, BiPredicate<Integer, Integer> isSJEP, int[] classIndexes) {
         itemStore.forEach(this::insert);
 
         List<Pattern> patterns = new LinkedList<>();
 
-        mergeSubTreeOn(root, patterns, new Pattern(), isMin, isSJEP);
+        mergeSubTreeOn(root, patterns, new Pattern(), isMin, isSJEP, classIndexes);
 
         return patterns;
     }
@@ -188,7 +208,7 @@ public class CPTree {
         }
     }
 
-    private void mergeSubTreeOn(Node t2, List<Pattern> patterns, Pattern alpha, Predicate<Integer> isMin, BiPredicate<Integer, Integer> isSJEP) {
+    private void mergeSubTreeOn(Node t2, List<Pattern> patterns, Pattern alpha, Predicate<Integer> isMin, BiPredicate<Integer, Integer> isSJEP, int[] classIndexes) {
         for (Entry entry : t2.entries()) {
             Node t1 = entry.child;
 
@@ -198,7 +218,7 @@ public class CPTree {
 
             int allItemCounts = Arrays.stream(entry.classCounts).sum();
             boolean test = false;
-            for (int i = 0; i < entry.classCounts.length; i++) {
+            for (int i : classIndexes) {
                 int currentItemCount = entry.classCounts[i];
                 int remainingItemCount = allItemCounts - currentItemCount;
 
@@ -211,7 +231,7 @@ public class CPTree {
             }
 
             if (!test && Arrays.stream(entry.classCounts).anyMatch(isMin::test)) {
-                mergeSubTreeOn(t1, patterns, beta, isMin, isSJEP);
+                mergeSubTreeOn(t1, patterns, beta, isMin, isSJEP, classIndexes);
             }
         }
     }

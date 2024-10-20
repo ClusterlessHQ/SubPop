@@ -124,4 +124,8 @@ public class ItemStore implements Iterable<ItemSet> {
         // reverse order
         return -1 * Double.compare(itemSupport(lhs), itemSupport(rhs));
     }
+
+    public boolean containsAllClasses(String[] classValue) {
+        return classes.containsAll(Arrays.asList(classValue));
+    }
 }

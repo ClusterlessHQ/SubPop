@@ -33,7 +33,7 @@ public class JEPTest {
 
     @Test
     void mushroom() throws IOException, CsvValidationException {
-        ItemStore itemStore = handle("data/mushrooms.csv", true, true);
+        ItemStore itemStore = handle("data/mushrooms.csv", true, true, 0);
         Assertions.assertEquals(8416, itemStore.size());
 
         CPTree cpTree = new CPTree(itemStore);
@@ -48,7 +48,7 @@ public class JEPTest {
 
     @Test
     void twoClass() throws IOException, CsvValidationException {
-        ItemStore itemStore = handle("data/two-class-example.csv", true, false);
+        ItemStore itemStore = handle("data/two-class-example.csv", true, false, 0);
 
         Assertions.assertEquals(8, itemStore.size());
 
@@ -64,16 +64,35 @@ public class JEPTest {
         Detail detail = new Detail(cpTree, patterns);
 
         System.out.println(Arrays.toString(detail.header()));
-        detail.rows().forEach(row -> System.out.println(Arrays.toString(row)));
+        detail.rowsAll().forEach(row -> System.out.println(Arrays.toString(row)));
     }
 
-    private ItemStore handle(String filename, boolean hasHeader, boolean retainCol) throws IOException, CsvValidationException {
+    @Test
+    void oneClass() throws IOException, CsvValidationException {
+        ItemStore itemStore = handle("data/two-class-example.csv", true, false, 0);
+
+        Assertions.assertEquals(8, itemStore.size());
+
+        CPTree cpTree = new CPTree(itemStore);
+
+        List<Pattern> patterns = cpTree.findPatterns(2, "d1");
+
+        Assertions.assertEquals(2, patterns.size());
+        Assertions.assertTrue(patterns.contains(new Pattern(0, List.of(new Item("e"), new Item("b")), 2)));
+        Assertions.assertTrue(patterns.contains(new Pattern(0, List.of(new Item("e"), new Item("c"), new Item("d")), 2)));
+
+        Detail detail = new Detail(cpTree, patterns);
+
+        System.out.println(Arrays.toString(detail.header()));
+        detail.rowsAll().forEach(row -> System.out.println(Arrays.toString(row)));
+    }
+
+    private ItemStore handle(String filename, boolean hasHeader, boolean retainCol, int classIndex) throws IOException, CsvValidationException {
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filename)) {
             assert inputStream != null;
             try (InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
                  CSVReader reader = createReader(inputStreamReader)) {
 
-                int classIndex = 0;
                 String[] headers = hasHeader ? reader.readNext() : new String[0];
                 ItemStore itemStore = new ItemStore(classIndex, headers, retainCol);
 

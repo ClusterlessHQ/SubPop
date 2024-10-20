@@ -28,11 +28,9 @@ dependencies {
     implementation("io.micronaut.serde:micronaut-serde-jackson:2.11.0")
     implementation("com.google.guava:guava:33.2.1-jre")
     implementation("org.barfuin.texttree:text-tree:2.1.2")
+    implementation("org.slf4j:slf4j-api:2.0.13")
 
-//    testImplementation("io.hosuaby:inject-resources-core:1.0.0")
-//    testImplementation("io.hosuaby:inject-resources-junit-jupiter:1.0.0")
-
-    runtimeOnly("ch.qos.logback:logback-classic:1.5.8")
+    runtimeOnly("ch.qos.logback:logback-classic:1.5.11")
 }
 
 application {
@@ -40,8 +38,12 @@ application {
 }
 
 java {
-    sourceCompatibility = JavaVersion.toVersion("17")
-    targetCompatibility = JavaVersion.toVersion("17")
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+tasks.withType<Test> {
+    maxHeapSize = "2g" // Set the desired maximum heap size
 }
 
 micronaut {
