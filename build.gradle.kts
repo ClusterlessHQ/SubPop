@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.*
+
 /*
  * Copyright (c) 2024 Chris K Wensel <chris@wensel.net>. All Rights Reserved.
  *
@@ -11,7 +14,18 @@ plugins {
     id("io.micronaut.application") version "4.4.2"
 }
 
-version = "0.1"
+val versionProperties = Properties().apply {
+    load(FileInputStream(File(rootProject.rootDir, "version.properties")))
+}
+
+val buildRelease = false
+val buildNumber = System.getenv("GITHUB_RUN_NUMBER") ?: "dev"
+val wipReleases = "wip-${buildNumber}"
+
+version = if (buildRelease)
+    "${versionProperties["release.major"]}-${versionProperties["release.minor"]}"
+else "${versionProperties["release.major"]}-${wipReleases}"
+
 group = "io.clusterless"
 
 repositories {
@@ -22,15 +36,17 @@ dependencies {
     annotationProcessor("info.picocli:picocli-codegen:4.7.6")
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor:2.11.0")
 
+    implementation("org.jetbrains:annotations:24.1.0")
     implementation("info.picocli:picocli:4.7.6")
     implementation("com.opencsv:opencsv:5.9")
     implementation("io.micronaut.picocli:micronaut-picocli:5.5.0")
     implementation("io.micronaut.serde:micronaut-serde-jackson:2.11.0")
     implementation("com.google.guava:guava:33.2.1-jre")
     implementation("org.barfuin.texttree:text-tree:2.1.2")
-    implementation("org.slf4j:slf4j-api:2.0.13")
 
-    runtimeOnly("ch.qos.logback:logback-classic:1.5.11")
+    // logging
+    implementation("org.slf4j:slf4j-api:2.0.13")
+    implementation("ch.qos.logback:logback-classic:1.5.11")
 }
 
 application {
@@ -44,6 +60,13 @@ java {
 
 tasks.withType<Test> {
     maxHeapSize = "2g" // Set the desired maximum heap size
+}
+
+tasks.named<ProcessResources>("processResources") {
+    doFirst {
+        file(rootProject.layout.buildDirectory.file("resources/main/version.properties"))
+            .writeText("release.full=${version}")
+    }
 }
 
 micronaut {

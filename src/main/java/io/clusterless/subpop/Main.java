@@ -15,26 +15,29 @@ import io.clusterless.subpop.algorithm.detail.Detail;
 import io.clusterless.subpop.algorithm.items.ItemStore;
 import io.clusterless.subpop.options.InputOptions;
 import io.clusterless.subpop.options.OutputOptions;
+import io.clusterless.subpop.util.Verbosity;
+import io.clusterless.subpop.util.VersionProvider;
 import io.micronaut.configuration.picocli.PicocliRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 
 import java.io.IOException;
 import java.util.List;
 
 @Command(
         name = "subpop",
-        description = "...",
-        mixinStandardHelpOptions = true
+        description = "a tool for diffing datasets",
+        mixinStandardHelpOptions = true,
+        versionProvider = VersionProvider.class,
+        sortOptions = false
 )
 public class Main implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
-    @Option(names = {"-v", "--verbose"}, description = "...")
-    boolean verbose;
+    @CommandLine.Mixin
+    protected Verbosity verbosity = new Verbosity();
 
     @CommandLine.Mixin
     protected InputOptions inputOptions = new InputOptions();

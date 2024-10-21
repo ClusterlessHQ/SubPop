@@ -6,10 +6,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-plugins {
-    // Apply the foojay-resolver plugin to allow automatic download of JDKs
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.4.0"
+package io.clusterless.subpop.util;
+
+import picocli.CommandLine;
+
+public class VersionProvider implements CommandLine.IVersionProvider {
+    @Override
+    public String[] getVersion() throws Exception {
+        return new String[]{Versions.version()};
+    }
 }
-
-rootProject.name = "subpop"
-
