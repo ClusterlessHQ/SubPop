@@ -61,29 +61,30 @@ To see the full results:
 ## CLI Options
 
 ```text
-Usage: subpop [-hvV] [--input-header] [--output-header]
+Usage: subpop [-hVv] [--input-header] [--output-header]
               [--class-col=<classIndex>] [--input-delimiter=<delimiter>]
               [--min-ratio=<supportRatio>] [--min-support=<support>]
               [--output-delimiter=<delimiter>] [--class-value=<classValue>]...
               [--input=<inputs>]...
-...
+a tool for diffing datasets
+  -v, --verbose          Specify multiple -v options to increase verbosity.
+                         For example, `-v -v -v` or `-vvv`
+      --input=<inputs>   input data
+      --input-header     has header
+      --input-delimiter=<delimiter>
+                         delimiter
+      --output-header    has header
+      --output-delimiter=<delimiter>
+                         delimiter
       --class-col=<classIndex>
                          class column name or index
       --class-value=<classValue>
                          class value
-  -h, --help             Show this help message and exit.
-      --input=<inputs>   input data
-      --input-delimiter=<delimiter>
-                         delimiter
-      --input-header     has header
-      --min-ratio=<supportRatio>
-                         minimum support ratio
       --min-support=<support>
                          minimum support
-      --output-delimiter=<delimiter>
-                         delimiter
-      --output-header    has header
-  -v, --verbose          ...
+      --min-ratio=<supportRatio>
+                         minimum support ratio
+  -h, --help             Show this help message and exit.
   -V, --version          Print version information and exit.
 ```
 
