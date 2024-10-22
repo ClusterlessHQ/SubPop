@@ -17,14 +17,16 @@ import io.clusterless.subpop.options.InputOptions;
 import io.clusterless.subpop.options.OutputOptions;
 import io.clusterless.subpop.util.Verbosity;
 import io.clusterless.subpop.util.VersionProvider;
-import io.micronaut.configuration.picocli.PicocliRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 @Command(
         name = "subpop",
@@ -33,7 +35,7 @@ import java.util.List;
         versionProvider = VersionProvider.class,
         sortOptions = false
 )
-public class Main implements Runnable {
+public class Main implements Callable<Integer> {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
     @CommandLine.Mixin
@@ -57,10 +59,50 @@ public class Main implements Runnable {
     protected Float supportRatio = null;
 
     public static void main(String[] args) throws Exception {
-        PicocliRunner.run(Main.class, args);
+        Main main = new Main();
+
+        CommandLine commandLine = new CommandLine(main);
+
+        try {
+            commandLine.parseArgs(args);
+        } catch (CommandLine.MissingParameterException | CommandLine.UnmatchedArgumentException e) {
+            System.err.println(e.getMessage());
+            commandLine.usage(System.out);
+            System.exit(-1);
+        }
+
+        if (commandLine.isUsageHelpRequested()) {
+            commandLine.usage(System.out);
+            return;
+        } else if (commandLine.isVersionHelpRequested()) {
+            commandLine.printVersionHelp(System.out);
+            return;
+        }
+
+        int exitCode = 0;
+
+        try {
+            exitCode = commandLine.execute(args);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+
+            if (main.verbosity.isVerbose()) {
+                e.printStackTrace(System.err);
+            }
+
+            System.exit(-1); // get exit code from exception
+        }
+
+        System.exit(exitCode);
     }
 
-    public void run() {
+    @Override
+    public Integer call() throws Exception {
+        if (inputOptions.inputs().isEmpty() && hasStdIn() == 0) {
+            LOG.info("no input data");
+            throw new IllegalArgumentException("no input data");
+        }
+
         ItemStoreReader itemStoreReader = ItemStoreReader.builder()
                 .withSeparator(inputOptions.delimiter())
                 .withHasHeader(inputOptions.hasHeader())
@@ -75,10 +117,17 @@ public class Main implements Runnable {
                 .build();
 
         try {
-            ItemStore itemStore = itemStoreReader.read(inputOptions.inputs());
+            ItemStore itemStore;
+            if (inputOptions.inputs().isEmpty()) {
+                LOG.info("reading from stdin");
+                itemStore = itemStoreReader.read(System.in);
+            } else {
+                LOG.info("reading from files: {}", inputOptions.inputs());
+                itemStore = itemStoreReader.read(inputOptions.inputs());
+            }
 
-            if(!itemStore.containsAllClasses(classValue)) {
-                throw new IllegalArgumentException("class value not found");
+            if (!itemStore.containsAllClasses(classValue)) {
+                throw new IllegalArgumentException("class value not found: {}" + Arrays.toString(classValue));
             }
 
             CPTree cpTree = new CPTree(itemStore);
@@ -91,6 +140,16 @@ public class Main implements Runnable {
 
         } catch (CsvValidationException | IOException e) {
             throw new RuntimeException(e);
+        }
+
+        return 0;
+    }
+
+    private static int hasStdIn() {
+        try {
+            return System.in.available();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e.getMessage(), e);
         }
     }
 }

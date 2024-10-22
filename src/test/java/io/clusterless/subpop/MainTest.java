@@ -16,8 +16,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.*;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class MainTest {
 
     @Test
@@ -29,11 +27,13 @@ public class MainTest {
             String[] args = new String[]{
                     "--input", "src/test/resources/data/mushrooms.csv",
                     "--input-header",
+                    "--output-header",
                     "--class-col", "0",
                     "--class-value", "EDIBLE",
-                    "--min-ratio", ".4",
+                    "--min-ratio", ".4"
             };
-            PicocliRunner.run(Main.class, ctx, args);
+
+            PicocliRunner.call(Main.class, ctx, args);
 
             ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
             LineNumberReader lnr = new LineNumberReader(new InputStreamReader(bais));

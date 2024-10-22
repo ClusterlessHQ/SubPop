@@ -11,7 +11,7 @@ import java.util.*
 
 plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.micronaut.application") version "4.4.2"
+    id("io.micronaut.application") version "4.4.3"
 }
 
 val versionProperties = Properties().apply {
@@ -34,13 +34,13 @@ repositories {
 
 dependencies {
     annotationProcessor("info.picocli:picocli-codegen:4.7.6")
-    annotationProcessor("io.micronaut.serde:micronaut-serde-processor:2.11.0")
+    annotationProcessor("io.micronaut.serde:micronaut-serde-processor:2.11.1")
 
     implementation("org.jetbrains:annotations:24.1.0")
     implementation("info.picocli:picocli:4.7.6")
     implementation("com.opencsv:opencsv:5.9")
     implementation("io.micronaut.picocli:micronaut-picocli:5.5.0")
-    implementation("io.micronaut.serde:micronaut-serde-jackson:2.11.0")
+    implementation("io.micronaut.serde:micronaut-serde-jackson:2.11.1")
     implementation("com.google.guava:guava:33.2.1-jre")
     implementation("org.barfuin.texttree:text-tree:2.1.2")
 
@@ -59,7 +59,8 @@ java {
 }
 
 tasks.withType<Test> {
-    maxHeapSize = "2g" // Set the desired maximum heap size
+    useJUnitPlatform()
+    maxHeapSize = "5g" // Set the desired maximum heap size
 }
 
 tasks.named<ProcessResources>("processResources") {
@@ -70,6 +71,7 @@ tasks.named<ProcessResources>("processResources") {
 }
 
 micronaut {
+    version.set("4.6.0")
     testRuntime("junit5")
     processing {
         incremental(true)

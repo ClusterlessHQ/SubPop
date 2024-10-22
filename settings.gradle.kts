@@ -9,6 +9,7 @@
 plugins {
     // Apply the foojay-resolver plugin to allow automatic download of JDKs
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.4.0"
+    id("io.micronaut.platform.catalog") version "4.4.3"
 }
 
 rootProject.name = "subpop"

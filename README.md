@@ -55,7 +55,9 @@ To see the full results:
 
 ```shell
 ./gradlew installDist
-./build/install/subpop/bin/subpop --input src/test/resources/data/mushrooms.csv --min-ratio .4 --class-value EDIBLE
+./build/install/subpop/bin/subpop --input src/test/resources/data/mushrooms.csv --input-header --min-ratio .4 --class-value EDIBLE
+# or
+cat src/test/resources/data/mushrooms.csv | ./build/install/subpop/bin/subpop --input-header --min-ratio .4 --class-value EDIBLE 
 ```
 
 ## CLI Options
