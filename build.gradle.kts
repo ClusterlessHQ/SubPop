@@ -1,3 +1,6 @@
+import org.jreleaser.model.Active
+import org.jreleaser.model.Distribution
+import org.jreleaser.model.Stereotype
 import java.io.FileInputStream
 import java.util.*
 
@@ -12,6 +15,7 @@ import java.util.*
 plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.application") version "4.4.3"
+    id("org.jreleaser") version "1.14.0"
 }
 
 val versionProperties = Properties().apply {
@@ -30,6 +34,18 @@ group = "io.clusterless"
 
 repositories {
     mavenCentral()
+
+    maven {
+        url = uri("https://maven.pkg.github.com/cwensel/*")
+        name = "github"
+        credentials(PasswordCredentials::class) {
+            username = (project.findProperty("githubUsername") ?: System.getenv("USERNAME")) as? String
+            password = (project.findProperty("githubPassword") ?: System.getenv("GITHUB_TOKEN")) as? String
+        }
+        content {
+            includeVersionByRegex("net.wensel", "cascading-.*", ".*-wip-.*")
+        }
+    }
 }
 
 dependencies {
@@ -50,7 +66,14 @@ dependencies {
 }
 
 application {
+    applicationName = "subpop"
     mainClass = "io.clusterless.subpop.Main"
+}
+
+distributions {
+    main {
+        distributionBaseName.set("subpop")
+    }
 }
 
 java {
@@ -81,4 +104,98 @@ micronaut {
 
 tasks.named<io.micronaut.gradle.docker.NativeImageDockerfile>("dockerfileNative") {
     jdkVersion = "21"
+}
+
+jreleaser {
+    dryrun.set(false)
+
+    project {
+        description.set("SubPop is a command line utility for finding the differences between one or more tabular datasets.")
+        authors.add("Chris K Wensel")
+        copyright.set("Chris K Wensel")
+        license.set("MPL-2.0")
+        stereotype.set(Stereotype.CLI)
+        links {
+            homepage.set("https://github.com/ClusterlessHQ")
+        }
+        inceptionYear.set("2024")
+        gitRootSearch.set(true)
+    }
+
+    signing {
+        armored.set(true)
+        active.set(Active.ALWAYS)
+        verify.set(false)
+    }
+
+    release {
+        github {
+            overwrite.set(true)
+            sign.set(false)
+            repoOwner.set("ClusterlessHQ")
+            name.set("subpop")
+            username.set("cwensel")
+            branch.set("wip-1.0")
+            changelog.enabled.set(false)
+            milestone.close.set(false)
+        }
+    }
+
+    distributions {
+        create("subpop") {
+            distributionType.set(Distribution.DistributionType.JAVA_BINARY)
+            executable {
+                name.set("subpop")
+            }
+            artifact {
+                path.set(file("build/distributions/{{distributionName}}-{{projectVersion}}.zip"))
+            }
+        }
+    }
+
+    packagers {
+        brew {
+            active.set(Active.ALWAYS)
+            repository.active.set(Active.ALWAYS)
+        }
+
+        docker {
+            active.set(Active.ALWAYS)
+
+            repository {
+                repoOwner.set("ClusterlessHQ")
+                name.set("subpop-docker")
+            }
+
+            registries {
+                create("DEFAULT") {
+                    externalLogin.set(true)
+                    repositoryName.set("clusterless")
+                }
+            }
+
+            buildx {
+                enabled.set(false)
+                platform("linux/amd64")
+                platform("linux/arm64")
+            }
+
+            imageName("{{owner}}/{{distributionName}}:{{projectVersion}}")
+
+            if (buildRelease) {
+                imageName("{{owner}}/{{distributionName}}:{{projectVersionMajor}}")
+                imageName("{{owner}}/{{distributionName}}:{{projectVersionMajor}}.{{projectVersionMinor}}")
+                imageName("{{owner}}/{{distributionName}}:latest")
+            } else {
+                imageName("{{owner}}/{{distributionName}}:latest-wip")
+            }
+        }
+    }
+}
+
+tasks.register("release") {
+    dependsOn("distZip")
+    dependsOn("jreleaserRelease")
+    dependsOn("jreleaserPackage")
+    dependsOn("jreleaserPublish")
 }

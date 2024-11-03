@@ -24,7 +24,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Setup Env
-        run: echo "${{ vars.GRADLE_PROPERTIES }}" > gradle.properties
+        run: echo "${{ vars.GRADLE_PROPERTIES }}" >> gradle.properties
 
       - name: Run Tests
         env:
@@ -55,5 +55,5 @@ jobs:
         with:
           name: jreleaser-log
           path: |
-            tessellate-main/build/jreleaser/trace.log
-            tessellate-main/build/jreleaser/output.properties
+            build/jreleaser/trace.log
+            build/jreleaser/output.properties
