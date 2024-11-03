@@ -1,3 +1,4 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jreleaser.model.Active
 import org.jreleaser.model.Distribution
 import org.jreleaser.model.Stereotype
@@ -13,9 +14,9 @@ import java.util.*
  */
 
 plugins {
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "8.3.5"
     id("io.micronaut.application") version "4.4.3"
-    id("org.jreleaser") version "1.14.0"
+    id("org.jreleaser") version "1.15.0"
 }
 
 val versionProperties = Properties().apply {
@@ -65,6 +66,11 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.5.11")
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
 application {
     applicationName = "subpop"
     mainClass = "io.clusterless.subpop.Main"
@@ -76,10 +82,19 @@ distributions {
     }
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+tasks.withType<ShadowJar>{
+    archiveBaseName.set("subpop")
 }
+
+tasks.named<Zip>("shadowDistZip") {
+    archiveBaseName.set("subpop")
+}
+
+tasks.named<Tar>("shadowDistTar") {
+    archiveBaseName.set("subpop")
+}
+
+
 
 tasks.withType<Test> {
     useJUnitPlatform()
@@ -193,8 +208,20 @@ jreleaser {
     }
 }
 
+tasks.named("distZip"){
+    enabled = false
+}
+
+tasks.named("distTar"){
+    enabled = false
+}
+
+tasks.named("jreleaserPackage") {
+    dependsOn("shadowDistZip")
+    dependsOn("shadowDistTar")
+}
+
 tasks.register("release") {
-    dependsOn("distZip")
     dependsOn("jreleaserRelease")
     dependsOn("jreleaserPackage")
     dependsOn("jreleaserPublish")
