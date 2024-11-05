@@ -21,8 +21,7 @@ Consider the two classes (d1 and d2) below.
 | d2    | d | e |   |   |
 
 SubPop will identify the item sets unique to each class. In this example the values are considered as a bag of values,
-so
-the column is ignored.
+so the column is ignored.
 
 | class |   |   |   | support |
 |-------|---|---|---|---------|
@@ -36,7 +35,21 @@ The support is the ratio of occurrences with the size of the class population.
 
 ## Installation
 
-__CLI is still under development__
+All SubPop releases are available via [Homebrew](https://brew.sh):
+
+```shell
+brew tap clusterlesshq/tap
+brew install subpop
+tess --version
+```
+
+Available on Docker Hub:
+
+- https://hub.docker.com/r/clusterless/subpop/tags
+
+And, you can download the latest releases directly from GitHub:
+
+- https://github.com/ClusterlessHQ/subpop/releases
 
 ## Usage
 
